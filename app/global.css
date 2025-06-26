@@ -48,7 +48,7 @@ html {
 }
 
 .prose a {
-  @apply underline transition-all decoration-neutral-400 dark:decoration-neutral-600 underline-offset-2 decoration-[0.1em];
+  @apply underline transition-all decoration-neutral-400 dark:decoration-neutral-600 underline-offset-2 decoration-[0.1em] hover:decoration-neutral-600 dark:hover:decoration-neutral-400;
 }
 
 .prose .anchor:after {
@@ -61,17 +61,17 @@ html {
 }
 
 .prose pre {
-  @apply bg-neutral-50 dark:bg-neutral-900 rounded-lg overflow-x-auto border border-neutral-200 dark:border-neutral-900 py-2 px-3 text-sm;
+  @apply bg-neutral-50 dark:bg-neutral-900 rounded-lg overflow-x-auto border border-neutral-200 dark:border-neutral-800 py-4 px-4 text-sm my-6;
 }
 
 .prose code {
-  @apply px-1 py-0.5 rounded-lg;
+  @apply px-1.5 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 text-[0.875em];
 }
 
 .prose pre code {
-  @apply p-0;
+  @apply p-0 bg-transparent;
   border: initial;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .prose code span {
@@ -84,19 +84,19 @@ html {
 }
 
 .prose p {
-  @apply my-4 text-neutral-800 dark:text-neutral-200;
+  @apply my-6 text-neutral-800 dark:text-neutral-200 leading-7;
 }
 
 .prose h1 {
-  @apply text-4xl font-medium tracking-tight mt-6 mb-2;
+  @apply text-4xl font-semibold tracking-tight mt-8 mb-4;
 }
 
 .prose h2 {
-  @apply text-xl font-medium tracking-tight mt-6 mb-2;
+  @apply text-2xl font-semibold tracking-tight mt-8 mb-4;
 }
 
 .prose h3 {
-  @apply text-xl font-medium tracking-tight mt-6 mb-2;
+  @apply text-xl font-semibold tracking-tight mt-6 mb-3;
 }
 
 .prose h4 {
@@ -108,17 +108,26 @@ html {
 }
 
 .prose ul {
-  @apply list-disc pl-6;
+  @apply list-disc pl-6 my-6 space-y-2;
 }
 
 .prose ol {
-  @apply list-decimal pl-6;
+  @apply list-decimal pl-6 my-6 space-y-2;
+}
+
+.prose li {
+  @apply text-neutral-800 dark:text-neutral-200 leading-7;
 }
 
 .prose > :first-child {
   /* Override removing top margin, causing layout shift */
   margin-top: 1.25em !important;
   margin-bottom: 1.25em !important;
+}
+
+/* Lead paragraph */
+.prose > p:first-of-type {
+  @apply text-lg leading-8 text-neutral-700 dark:text-neutral-300;
 }
 
 pre::-webkit-scrollbar {
@@ -143,6 +152,26 @@ table {
   max-width: fit-content;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-neutral-300 dark:border-neutral-700 pl-4 my-6 italic text-neutral-700 dark:text-neutral-300;
+}
+
+.prose hr {
+  @apply my-8 border-neutral-200 dark:border-neutral-800;
+}
+
+.prose table {
+  @apply my-6;
+}
+
+.prose th {
+  @apply font-semibold text-left p-2 border-b-2 border-neutral-300 dark:border-neutral-700;
+}
+
+.prose td {
+  @apply p-2 border-b border-neutral-200 dark:border-neutral-800;
 }
 
 .title {

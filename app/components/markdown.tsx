@@ -1,7 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-// import { highlight } from 'sugar-high'
+import Markdown from 'markdown-to-jsx'
+import { highlight } from 'sugar-high'
 import React from 'react'
 
 function Table({ data }) {
@@ -49,9 +51,10 @@ function RoundedImage(props) {
 }
 
 function Code({ children, ...props }) {
-  // Temporarily disable sugar-high to test if it's causing the issue
-  // let codeHTML = highlight(children)
-  // return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
+  if (typeof children === 'string') {
+    let codeHTML = highlight(children)
+    return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
+  }
   return <code {...props}>{children}</code>
 }
 
@@ -59,11 +62,11 @@ function slugify(str) {
   return str
     .toString()
     .toLowerCase()
-    .trim() // Remove whitespace from both ends of a string
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/&/g, '-and-') // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '') // Remove all non-word characters except for -
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/&/g, '-and-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
 }
 
 function createHeading(level) {
@@ -86,24 +89,25 @@ function createHeading(level) {
   return Heading
 }
 
-let components = {
-  h1: createHeading(1),
-  h2: createHeading(2),
-  h3: createHeading(3),
-  h4: createHeading(4),
-  h5: createHeading(5),
-  h6: createHeading(6),
-  Image: RoundedImage,
-  a: CustomLink,
-  code: Code,
-  Table,
-}
-
-export function CustomMDX(props) {
+export function CustomMarkdown({ children }: { children: string }) {
   return (
-    <MDXRemote
-      {...props}
-      components={{ ...components, ...(props.components || {}) }}
-    />
+    <Markdown
+      options={{
+        overrides: {
+          h1: createHeading(1),
+          h2: createHeading(2),
+          h3: createHeading(3),
+          h4: createHeading(4),
+          h5: createHeading(5),
+          h6: createHeading(6),
+          img: RoundedImage,
+          a: CustomLink,
+          code: Code,
+          Table,
+        },
+      }}
+    >
+      {children}
+    </Markdown>
   )
 }
