@@ -15,6 +15,7 @@
     "geist": "1.4.2",
     "markdown-to-jsx": "^7.7.8",
     "next": "canary",
+    "next-mdx-remote": "^5.0.0",
     "postcss": "^8.4.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",

@@ -6,6 +6,7 @@ import { Navbar } from './components/nav'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/footer'
+import { BackToTop } from './components/back-to-top'
 import { baseUrl } from './sitemap'
 
 export const metadata: Metadata = {
@@ -60,6 +61,7 @@ export default function RootLayout({
           <Analytics />
           <SpeedInsights />
         </main>
+        <BackToTop />
       </body>
     </html>
   )

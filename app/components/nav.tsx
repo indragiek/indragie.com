@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const navItems = {
   '/': {
@@ -45,6 +48,8 @@ function EmailIcon() {
 }
 
 export function Navbar() {
+  const pathname = usePathname()
+  
   return (
     <aside className="-ml-[8px] mb-16 tracking-tight">
       <div className="lg:sticky lg:top-20">
@@ -54,13 +59,21 @@ export function Navbar() {
         >
           <div className="flex flex-row space-x-0">
             {Object.entries(navItems).map(([path, { name }]) => {
+              const isActive = path === '/' ? pathname === path : pathname.startsWith(path)
               return (
                 <Link
                   key={path}
                   href={path}
-                  className="transition-all hover:text-neutral-800 dark:hover:text-neutral-200 flex align-middle relative py-1 px-2 m-1"
+                  className={`transition-all hover:text-neutral-800 dark:hover:text-neutral-200 flex align-middle relative py-1 px-2 m-1 ${
+                    isActive 
+                      ? 'text-neutral-900 dark:text-white font-medium' 
+                      : 'text-neutral-600 dark:text-neutral-400'
+                  }`}
                 >
                   {name}
+                  {isActive && (
+                    <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-neutral-400/0 via-neutral-400/70 to-neutral-400/0 dark:from-neutral-500/0 dark:via-neutral-500/70 dark:to-neutral-500/0"></span>
+                  )}
                 </Link>
               )
             })}

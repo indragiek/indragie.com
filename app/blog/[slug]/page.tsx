@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CustomMarkdown } from 'app/components/markdown'
-import { formatDate, getBlogPosts } from 'app/blog/utils'
+import { formatDate, getBlogPosts, calculateReadingTime } from 'app/blog/utils'
 import { baseUrl } from 'app/sitemap'
 
 export async function generateStaticParams() {
@@ -90,6 +90,9 @@ export default async function Blog({ params }) {
       <div className="flex justify-between items-center mt-2 mb-8 text-sm">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           {formatDate(post.metadata.publishedAt)}
+        </p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          {calculateReadingTime(post.content)}
         </p>
       </div>
       <article className="prose">
