@@ -43,7 +43,7 @@ export default function Footer() {
         </li>
       </ul>
       <p className="mt-8 text-neutral-600 dark:text-neutral-300">
-        © {new Date().getFullYear()} · Posts licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-neutral-800 dark:hover:text-neutral-100">CC BY 4.0</a>
+        © {new Date().getFullYear()} Indragie Karunaratne · Posts licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-neutral-800 dark:hover:text-neutral-100">CC BY 4.0</a>
       </p>
     </footer>
   )
