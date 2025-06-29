@@ -2,8 +2,8 @@ import { ImageResponse } from 'next/og'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
-async function loadGoogleFont(font: string, text: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`
+async function loadGoogleFont(font: string, text: string, weight: number = 400) {
+  const url = `https://fonts.googleapis.com/css2?family=${font}:wght@${weight}&text=${encodeURIComponent(text)}`
   const css = await (await fetch(url)).text()
   const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/)
 
@@ -70,13 +70,13 @@ export async function GET(request: Request) {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 16,
+              gap: 8,
             }}
           >
             <h1
               style={{
                 fontSize: 72,
-                fontWeight: 600,
+                fontWeight: 500,
                 margin: 0,
                 color: '#171717',
                 letterSpacing: '-0.025em',
@@ -107,8 +107,15 @@ export async function GET(request: Request) {
       fonts: [
         {
           name: 'Geist',
-          data: await loadGoogleFont('Geist', allText),
+          data: await loadGoogleFont('Geist', title, 500),
           style: 'normal',
+          weight: 500,
+        },
+        {
+          name: 'Geist',
+          data: await loadGoogleFont('Geist', subtitle, 400),
+          style: 'normal',
+          weight: 400,
         },
       ],
     }
