@@ -17,7 +17,7 @@ export async function GitHubSection() {
     }
 
   return (
-    <div className="my-12">
+    <div className="mb-14">
       <h2 className="mb-4 text-2xl font-semibold tracking-tight">GitHub</h2>
       
       {recentContribution && (

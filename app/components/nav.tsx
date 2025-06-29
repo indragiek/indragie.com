@@ -72,7 +72,7 @@ export function Navbar() {
                 >
                   {name}
                   {isActive && (
-                    <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-neutral-400/0 via-neutral-400/70 to-neutral-400/0 dark:from-neutral-500/0 dark:via-neutral-500/70 dark:to-neutral-500/0"></span>
+                    <span className="absolute inset-x-2 -bottom-px h-px bg-neutral-800 dark:bg-neutral-200"></span>
                   )}
                 </Link>
               )
