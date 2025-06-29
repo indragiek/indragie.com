@@ -1,5 +1,6 @@
 import { getTopRepositories, getMostRecentContribution, formatRelativeTime } from 'app/lib/github'
 import { GitHubError } from './github-error'
+import Image from 'next/image'
 
 export async function GitHubSection() {
   try {
@@ -42,6 +43,23 @@ export async function GitHubSection() {
               </p>
             )}
             <div className="border-l-2 border-neutral-200 dark:border-neutral-800 pl-3">
+              <div className="flex items-center gap-2 mb-2 text-sm text-neutral-600 dark:text-neutral-400">
+                <Image
+                  src={recentContribution.author.avatarUrl}
+                  alt={recentContribution.author.username}
+                  width={20}
+                  height={20}
+                  className="rounded-full"
+                />
+                <span>
+                  {recentContribution.author.username} {' '}
+                  {recentContribution.type === 'commit' ? 'committed' : 
+                   recentContribution.prStatus === 'merged' ? 'merged' :
+                   recentContribution.action === 'opened' ? 'opened' :
+                   recentContribution.action === 'closed' ? 'closed' :
+                   recentContribution.action || 'updated'}
+                </span>
+              </div>
               <a
                 href={recentContribution.url}
                 target="_blank"

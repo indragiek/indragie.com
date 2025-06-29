@@ -14,6 +14,10 @@ interface GitHubRepo {
 interface GitHubEvent {
   type: string
   created_at: string
+  actor: {
+    login: string
+    avatar_url: string
+  }
   repo: {
     name: string
     url: string
@@ -30,6 +34,7 @@ interface GitHubEvent {
       state: string
     }
     ref_type?: string
+    action?: string
     issue?: {
       title: string
       html_url: string
@@ -88,6 +93,11 @@ export interface Contribution {
   url: string
   timestamp: string
   prStatus?: 'open' | 'closed' | 'merged'
+  author: {
+    username: string
+    avatarUrl: string
+  }
+  action?: string
 }
 
 export async function getMostRecentContribution(): Promise<Contribution | null> {
@@ -137,7 +147,11 @@ export async function getMostRecentContribution(): Promise<Contribution | null> 
           type: 'commit',
           title: commitMessage,
           url: `${repoUrl}/commit/${latestCommit.sha}`,
-          timestamp: event.created_at
+          timestamp: event.created_at,
+          author: {
+            username: event.actor.login,
+            avatarUrl: event.actor.avatar_url
+          }
         }
       } else if (event.type === 'PullRequestEvent' && event.payload?.pull_request) {
         const pr = event.payload.pull_request
@@ -151,7 +165,12 @@ export async function getMostRecentContribution(): Promise<Contribution | null> 
           title: pr.title,
           url: pr.html_url,
           timestamp: event.created_at,
-          prStatus
+          prStatus,
+          author: {
+            username: event.actor.login,
+            avatarUrl: event.actor.avatar_url
+          },
+          action: event.payload.action
         }
       }
     }
