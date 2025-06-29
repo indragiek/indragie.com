@@ -12,15 +12,15 @@ import { baseUrl } from './sitemap'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Next.js Portfolio Starter',
-    template: '%s | Next.js Portfolio Starter',
+    default: 'Indragie Karunaratne',
+    template: '%s | Indragie Karunaratne',
   },
-  description: 'This is my portfolio.',
+  description: "I'm a Director of Engineering at Sentry working on observability tools. I started my career as an independent iOS and macOS developer, then worked on mobile infrastructure at Meta before co-founding Specto, a mobile application performance monitoring startup (acquired by Sentry). Lately, I've been exploring AI developer tools and building Context, a macOS app for debugging MCP servers.",
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
+    title: 'Indragie Karunaratne',
+    description: "I'm a Director of Engineering at Sentry working on observability tools. I started my career as an independent iOS and macOS developer, then worked on mobile infrastructure at Meta before co-founding Specto, a mobile application performance monitoring startup (acquired by Sentry). Lately, I've been exploring AI developer tools and building Context, a macOS app for debugging MCP servers.",
     url: baseUrl,
-    siteName: 'My Portfolio',
+    siteName: 'Indragie Karunaratne',
     locale: 'en_US',
     type: 'website',
   },
