@@ -21,8 +21,22 @@ export const metadata: Metadata = {
     description: "I'm a Director of Engineering at Sentry working on observability tools. I started my career as an independent iOS and macOS developer, then worked on mobile infrastructure at Meta before co-founding Specto, a mobile application performance monitoring startup (acquired by Sentry). Lately, I've been exploring AI developer tools and building Context, a macOS app for debugging MCP servers.",
     url: baseUrl,
     siteName: 'Indragie Karunaratne',
+    images: [
+      {
+        url: `${baseUrl}/og`,
+        width: 1200,
+        height: 630,
+        alt: 'Indragie Karunaratne - Director of Engineering at Sentry',
+      },
+    ],
     locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Indragie Karunaratne',
+    description: "I'm a Director of Engineering at Sentry working on observability tools. I started my career as an independent iOS and macOS developer, then worked on mobile infrastructure at Meta before co-founding Specto, a mobile application performance monitoring startup (acquired by Sentry). Lately, I've been exploring AI developer tools and building Context, a macOS app for debugging MCP servers.",
+    images: [`${baseUrl}/og`],
   },
   robots: {
     index: true,
