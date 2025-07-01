@@ -59,7 +59,7 @@ function CustomLink(props) {
 function RoundedImage(props) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showExpandIcon, setShowExpandIcon] = useState(false)
-  const imgRef = React.useRef(null)
+  const imgRef = React.useRef<HTMLImageElement>(null)
   
   // Check if image is scaled down
   React.useEffect(() => {
