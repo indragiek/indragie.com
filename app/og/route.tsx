@@ -22,6 +22,153 @@ export async function GET(request: Request) {
   let title = url.searchParams.get('title') || 'Indragie Karunaratne'
   let subtitle = url.searchParams.get('subtitle') || 'Director of Engineering at Sentry'
   let showAvatar = url.searchParams.get('avatar') !== 'false'
+  let type = url.searchParams.get('type')
+  let date = url.searchParams.get('date')
+  let author = url.searchParams.get('author')
+  
+  // For blog posts, we'll show a different layout
+  if (type === 'blog' && date && author) {
+    // Format the date
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+    
+    const blogText = `${title}${author}${formattedDate}`
+    
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+            position: 'relative',
+            overflow: 'hidden',
+            padding: '80px',
+          }}
+        >
+          {/* Decorative circles */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '600px',
+              height: '600px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)',
+              top: '-300px',
+              right: '-300px',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: '400px',
+              height: '400px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
+              bottom: '-200px',
+              left: '-200px',
+            }}
+          />
+          
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 32,
+              zIndex: 1,
+              maxWidth: '900px',
+              textAlign: 'center',
+            }}
+          >
+            <h1
+              style={{
+                fontSize: 64,
+                fontWeight: 600,
+                margin: 0,
+                background: 'linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                letterSpacing: '-0.05em',
+                fontFamily: 'Geist',
+                lineHeight: 1.2,
+              }}
+            >
+              {title}
+            </h1>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+                alignItems: 'center',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 28,
+                  margin: 0,
+                  color: '#525252',
+                  fontWeight: 500,
+                  fontFamily: 'Geist',
+                  lineHeight: 1.4,
+                  letterSpacing: '-0.03em',
+                }}
+              >
+                {author}
+              </p>
+              <p
+                style={{
+                  fontSize: 24,
+                  margin: 0,
+                  color: '#6b7280',
+                  fontWeight: 400,
+                  fontFamily: 'Geist',
+                  lineHeight: 1.4,
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {formattedDate}
+              </p>
+            </div>
+          </div>
+        </div>
+      ),
+      {
+        width: 1200,
+        height: 630,
+        fonts: [
+          {
+            name: 'Geist',
+            data: await loadGoogleFont('Geist', blogText, 600),
+            style: 'normal',
+            weight: 600,
+          },
+          {
+            name: 'Geist',
+            data: await loadGoogleFont('Geist', `${author}${formattedDate}`, 500),
+            style: 'normal',
+            weight: 500,
+          },
+          {
+            name: 'Geist',
+            data: await loadGoogleFont('Geist', formattedDate, 400),
+            style: 'normal',
+            weight: 400,
+          },
+        ],
+      }
+    )
+  }
   
   // Combine all text for font loading
   const allText = `${title}${subtitle}`
