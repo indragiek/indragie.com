@@ -101,7 +101,7 @@ function RoundedImage(props) {
               }}
               onClick={() => showExpandIcon && setIsExpanded(true)}
               onLoad={(e) => {
-                const img = e.target
+                const img = e.target as HTMLImageElement
                 const isScaledDown = img.naturalWidth > img.width || img.naturalHeight > img.height
                 setShowExpandIcon(isScaledDown)
               }}
