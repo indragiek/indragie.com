@@ -224,16 +224,30 @@ function slugify(str) {
   return str
     .toString()
     .toLowerCase()
+    .replace(/^\d+\.\s+/, '') // Remove numeric prefix for slug
+    .replace(/[^\w\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/&/g, '-and-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
 }
 
 function createHeading(level) {
   const Heading = ({ children }) => {
-    let slug = slugify(children)
+    // Extract text content from children
+    const extractText = (node) => {
+      if (typeof node === 'string') return node
+      if (React.isValidElement(node) && node.props.children) {
+        return extractText(node.props.children)
+      }
+      if (Array.isArray(node)) {
+        return node.map(extractText).join('')
+      }
+      return ''
+    }
+    
+    const textContent = extractText(children)
+    const slug = slugify(textContent)
+    
     return React.createElement(
       `h${level}`,
       { id: slug },
