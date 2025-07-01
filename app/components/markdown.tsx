@@ -203,8 +203,9 @@ function Code({ children, ...props }) {
 function Pre({ children, ...props }) {
   // Check if this is a wrap code block
   const codeElement = React.Children.toArray(children)[0]
-  const isWrapBlock = codeElement?.props?.['data-wrap'] === 'true' || 
-                      codeElement?.props?.className === 'language-wrap'
+  const isWrapBlock = React.isValidElement(codeElement) && 
+                      (codeElement.props?.['data-wrap'] === 'true' || 
+                       codeElement.props?.className === 'language-wrap')
   
   if (isWrapBlock) {
     // For wrap blocks, apply wrapping styles
