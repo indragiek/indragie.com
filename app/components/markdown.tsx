@@ -31,8 +31,17 @@ function Table({ data }) {
 
 function CustomLink(props) {
   let href = props.href
+  
+  // Check if this is an auto-linked .md file
+  // The markdown parser converts text like "CLAUDE.md" to href="https://CLAUDE.md"
+  if (href && href.match(/^https?:\/\/[A-Z]+\.md$/)) {
+    // Just return the plain text, not a link
+    // Extract the filename from the URL
+    const filename = href.replace(/^https?:\/\//, '')
+    return <>{filename}</>
+  }
 
-  if (href.startsWith('/')) {
+  if (href && href.startsWith('/')) {
     return (
       <Link href={href} {...props}>
         {props.children}
@@ -40,7 +49,7 @@ function CustomLink(props) {
     )
   }
 
-  if (href.startsWith('#')) {
+  if (href && href.startsWith('#')) {
     return <a {...props} />
   }
 
@@ -258,6 +267,15 @@ export function CustomMarkdown({ children }: { children: string }) {
           pre: Pre,
           Table,
         },
+        namedCodesToUnicode: {
+          amp: '&',
+          apos: "'",
+          gt: '>',
+          lt: '<',
+          nbsp: ' ',
+          quot: '"',
+        },
+        disableParsingRawHTML: true,
       }}
     >
       {children}
