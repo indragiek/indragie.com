@@ -94,6 +94,8 @@ function RoundedImage(props) {
               width={0}
               height={0}
               sizes="100vw"
+              loading="eager"
+              priority={true}
               className={`rounded-lg w-auto h-auto max-w-full ${showExpandIcon ? 'cursor-pointer' : ''}`}
               style={{
                 maxWidth: '100%',

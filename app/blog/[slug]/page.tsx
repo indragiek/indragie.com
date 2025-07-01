@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { CustomMarkdown } from 'app/components/markdown'
 import { formatDate, getBlogPosts, calculateReadingTime } from 'app/blog/utils'
 import { baseUrl } from 'app/sitemap'
+import { ScrollToHash } from 'app/components/scroll-to-hash'
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()
@@ -62,6 +63,7 @@ export default async function Blog({ params }) {
 
   return (
     <section>
+      <ScrollToHash />
       <script
         type="application/ld+json"
         suppressHydrationWarning
