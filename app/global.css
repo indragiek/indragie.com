@@ -178,3 +178,33 @@ table {
 .title {
   text-wrap: balance;
 }
+
+/* Wrap code blocks - remove syntax highlighting and enable wrapping */
+.prose pre code.language-wrap,
+.prose pre code.lang-wrap {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  display: block !important;
+}
+
+.prose pre:has(> code.language-wrap),
+.prose pre:has(> code.lang-wrap) {
+  white-space: pre-wrap !important;
+  overflow-x: visible !important;
+}
+
+/* Remove syntax highlighting colors for wrap blocks */
+.prose code.language-wrap span,
+.prose code.lang-wrap span {
+  color: inherit !important;
+  background: none !important;
+}
+
+/* Ensure the pre element also wraps */
+.prose pre {
+  white-space: pre;
+}
+
+.prose pre:has(> code.lang-wrap) {
+  white-space: pre-wrap !important;
+}

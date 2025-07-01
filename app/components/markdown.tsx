@@ -168,8 +168,19 @@ function RoundedImage(props) {
 }
 
 function Code({ children, ...props }) {
+  // Check if this is already processed HTML (has dangerouslySetInnerHTML)
+  if (props.dangerouslySetInnerHTML) {
+    return <code {...props} />
+  }
+  
   // Only apply syntax highlighting for code blocks (when parent is pre)
   const isCodeBlock = props.className || props.language
+  const isWrapBlock = props.className === 'language-wrap'
+  
+  // For wrap blocks, don't apply syntax highlighting
+  if (isWrapBlock) {
+    return <code {...props} data-wrap="true">{children}</code>
+  }
   
   if (isCodeBlock && typeof children === 'string') {
     let codeHTML = highlight(children)
@@ -178,6 +189,25 @@ function Code({ children, ...props }) {
   
   // For inline code, just return plain code element
   return <code {...props}>{children}</code>
+}
+
+function Pre({ children, ...props }) {
+  // Check if this is a wrap code block
+  const codeElement = React.Children.toArray(children)[0]
+  const isWrapBlock = codeElement?.props?.['data-wrap'] === 'true' || 
+                      codeElement?.props?.className === 'language-wrap'
+  
+  if (isWrapBlock) {
+    // For wrap blocks, apply wrapping styles
+    return (
+      <pre {...props} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+        {children}
+      </pre>
+    )
+  }
+  
+  // For regular code blocks
+  return <pre {...props}>{children}</pre>
 }
 
 function slugify(str) {
@@ -225,6 +255,7 @@ export function CustomMarkdown({ children }: { children: string }) {
           img: RoundedImage,
           a: CustomLink,
           code: Code,
+          pre: Pre,
           Table,
         },
       }}
