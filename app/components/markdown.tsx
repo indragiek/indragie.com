@@ -234,9 +234,9 @@ function slugify(str) {
 function createHeading(level) {
   const Heading = ({ children }) => {
     // Extract text content from children
-    const extractText = (node: any): string => {
+    const extractText = (node: React.ReactNode): string => {
       if (typeof node === 'string') return node
-      if (React.isValidElement(node) && node.props.children) {
+      if (React.isValidElement(node)) {
         return extractText(node.props.children)
       }
       if (Array.isArray(node)) {
