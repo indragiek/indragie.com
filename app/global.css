@@ -109,11 +109,11 @@ html {
 }
 
 .prose ul {
-  @apply list-disc pl-6 my-6 space-y-1;
+  @apply list-disc pl-6 my-6 space-y-0;
 }
 
 .prose ol {
-  @apply list-decimal pl-6 my-6 space-y-1;
+  @apply list-decimal pl-6 my-6 space-y-0;
 }
 
 .prose li {
