@@ -33,7 +33,7 @@ At this point, I was starting to play around with Claude Code and its support fo
 However, the experience of building and testing MCP servers was cumbersome: MCP servers communicate with clients over standard input/output streams, or over HTTP with [Server-Sent Events (SSE)](https://html.spec.whatwg.org/multipage/server-sent-events.html) to give servers the ability to stream responses to clients. It wasn't as simple as invoking a CLI or using `curl` to send requests to a service. There is a first-party tool called [MCP Inspector](https://github.com/modelcontextprotocol/inspector) that allows developers to test server functionality, but as a long-time macOS & iOS developer, I wanted to try building a native app to solve this problem. I figured it would be a great learning experience to push the boundaries of AI agents, and hoped to come out of it with a useful product.
 
 
-## 3. Claude Code is Good at Writing Code
+## 3. Claude Code Is Good at Writing Code
 
 Let me just start by saying that Claude Code (with the latest Sonnet 4 and Opus 4 models) is _genuinely_ good at writing code. It's certainly not a top 1% programmer, but I would say that Claude's outputs are significantly better than those of the average developer. Given a description of the feature you're trying to implement, Claude can:
 
@@ -50,7 +50,7 @@ Let me just start by saying that Claude Code (with the latest Sonnet 4 and Opus 
 
 The really incredible thing is that it does this in a fraction of the time that it would take a person to implement the whole thing. **Imagine onboarding a new employee with zero context on your project and having them ship a complete feature a few minutes later.** Instead of collaboration being 70% human and 30% AI with AI autocomplete, the agentic workflow is more like 20% human and 80% AI. I'm not saying that this will hold for every use case, but that's what it felt like to me while building this app.
 
-## 4. Claude Code is Okay at Swift and Good at SwiftUI
+## 4. Claude Code Is Okay at Swift and Good at SwiftUI
 
 I decided to build my app using the latest Apple developer technologies: Swift 6.1 and SwiftUI on macOS 15.5. I was curious to see how Claude would perform at writing Swift since there is significantly less Swift code in the training data for the model compared to a more ubiquitous language like Python or JavaScript.
 
@@ -85,7 +85,7 @@ If Claude doesn't produce a well-designed UI the first time, you can just tell i
 
 If you find a UI bug or a UI element you want to tweak, you can take a screenshot and drag and drop it (or ⌘+V paste it) directly into Claude Code. There will likely be better automation for this at some point, but for now, this works well and is universal, no matter what frontend platform you're building for.
 
-## 6. Context Engineering is Key
+## 6. Context Engineering Is Key
 
 With the advent of mainstream AI, the industry was quick to define a new discipline: _prompt engineering_. Prompt engineering was the idea that you had to carefully craft prompts to extract the best quality outputs from a model. This may have been true then, but in my experience, I've found that prompt engineering is the wrong thing to focus on when using more recent models. 
 
@@ -152,7 +152,7 @@ One small thing I found useful was the ability to generate mock data before I ha
 
 For MCP in particular, the mock data was even more important because most MCP servers at the time were not using most features of the spec outside of tools, but I still needed a way to validate the UI for those features.
 
-## 12. Building High Quality Automation is (Almost) Free Now
+## 12. Building High Quality Automation Is (Almost) Free Now
 
 Part of the painful last 20% of shipping is automating the process of releasing the app, especially on macOS, where you have to navigate the complicated maze of code signing, notarization, and packaging. In earlier projects, this is the point at which I would fiddle around trying to get [fastlane](https://fastlane.tools) set up correctly and then build some bare bones Python automation around it. Not this time.
 
