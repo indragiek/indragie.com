@@ -267,6 +267,14 @@ function createHeading(level) {
   return Heading
 }
 
+function FootnoteRef({ children, href }) {
+  return (
+    <sup>
+      <a href={href}>{children}</a>
+    </sup>
+  )
+}
+
 export function CustomMarkdown({ children }: { children: string }) {
   return (
     <Markdown
@@ -292,7 +300,7 @@ export function CustomMarkdown({ children }: { children: string }) {
           nbsp: ' ',
           quot: '"',
         },
-        disableParsingRawHTML: true,
+        disableParsingRawHTML: false, // Allow our HTML footnotes
       }}
     >
       {children}

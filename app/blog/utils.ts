@@ -153,8 +153,56 @@ function generateTableOfContents(content: string): string {
   return toc.trim()
 }
 
+function processFootnotes(content: string): string {
+  // Find all footnote references [^1], [^2], etc.
+  const footnoteRefRegex = /\[\^(\d+)\]/g
+  const footnoteDefRegex = /^\[\^(\d+)\]:\s*(.+)$/gm
+  
+  // Extract footnote definitions
+  const footnotes: { [key: string]: string } = {}
+  let match
+  
+  while ((match = footnoteDefRegex.exec(content)) !== null) {
+    footnotes[match[1]] = match[2]
+  }
+  
+  // If we don't have footnotes, return original content
+  if (Object.keys(footnotes).length === 0) {
+    return content
+  }
+  
+  // Remove footnote definitions from content
+  let processedContent = content.replace(footnoteDefRegex, '')
+  
+  // Replace footnote references with proper links
+  processedContent = processedContent.replace(footnoteRefRegex, (match, num) => {
+    return `<sup id="fnref-${num}"><a href="#fn-${num}">${num}</a></sup>`
+  })
+  
+  // Build footnotes HTML
+  let footnotesHtml = '\n\n<footer class="footnotes">\n'
+  footnotesHtml += '<h3>Notes</h3>\n'
+  footnotesHtml += '<div class="footnote-list">\n'
+  
+  Object.entries(footnotes).forEach(([num, text]) => {
+    footnotesHtml += `<div class="footnote-item" id="fn-${num}">\n`
+    footnotesHtml += `<span class="footnote-number">${num}.</span>\n`
+    footnotesHtml += `<span class="footnote-content">${text} <a href="#fnref-${num}" class="footnote-backref">↩</a></span>\n`
+    footnotesHtml += `</div>\n`
+  })
+  
+  footnotesHtml += '</div>\n</footer>'
+  
+  return processedContent.trim() + footnotesHtml
+}
+
 export function processContent(content: string): string {
   // Replace {{TOC}} with generated table of contents
   const toc = generateTableOfContents(content)
-  return content.replace('{{TOC}}', toc)
+  let processedContent = content.replace('{{TOC}}', toc)
+  
+  // Process footnotes
+  processedContent = processFootnotes(processedContent)
+  
+  return processedContent
 }
