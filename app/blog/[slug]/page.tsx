@@ -97,7 +97,10 @@ export default async function Blog({ params }) {
           {calculateReadingTime(post.content)}
         </p>
       </div>
-      <div className="mb-8">
+      <article className="prose">
+        <CustomMarkdown>{post.content}</CustomMarkdown>
+      </article>
+      <div className="mt-8">
         <a 
           href={`https://github.com/indragiek/indragie.com/blob/main/app/blog/posts/${post.slug}.mdx`}
           target="_blank"
@@ -110,9 +113,6 @@ export default async function Blog({ params }) {
           View source on GitHub
         </a>
       </div>
-      <article className="prose">
-        <CustomMarkdown>{post.content}</CustomMarkdown>
-      </article>
     </section>
   )
 }
