@@ -3,6 +3,7 @@ import { CustomMarkdown } from 'app/components/markdown'
 import { formatDate, getBlogPosts, calculateReadingTime } from 'app/blog/utils'
 import { baseUrl } from 'app/sitemap'
 import { ScrollToHash } from 'app/components/scroll-to-hash'
+import { ReadingProgress } from 'app/components/reading-progress'
 
 export async function generateStaticParams() {
   let posts = getBlogPosts()
@@ -63,6 +64,7 @@ export default async function Blog({ params }) {
 
   return (
     <section>
+      <ReadingProgress />
       <ScrollToHash />
       <script
         type="application/ld+json"
