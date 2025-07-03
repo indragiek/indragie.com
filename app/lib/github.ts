@@ -75,7 +75,7 @@ export async function getTopRepositories(): Promise<GitHubRepo[]> {
     const ownRepos = repos
       .filter((repo: any) => !repo.fork)
       .sort((a: GitHubRepo, b: GitHubRepo) => b.stargazers_count - a.stargazers_count)
-      .slice(0, 3)
+      .slice(0, 4)
     
     return ownRepos
   } catch (error) {

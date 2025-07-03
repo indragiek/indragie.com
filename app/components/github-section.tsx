@@ -89,50 +89,52 @@ export async function GitHubSection() {
       )}
 
       {topRepos.length > 0 && (
-        <div className="space-y-4">
+        <div>
           <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">Popular repositories</p>
-          {topRepos.map((repo) => (
-            <a
-              key={repo.full_name}
-              href={repo.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block group"
-            >
-              <div className="p-4 -mx-4 rounded-lg transition-all hover:bg-neutral-50 dark:hover:bg-neutral-950">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-medium text-neutral-900 dark:text-neutral-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors break-words">
-                        {repo.name}
-                      </h3>
-                      {repo.archived && (
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 whitespace-nowrap">
-                          Archived
-                        </span>
-                      )}
-                      {repo.is_template && (
-                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 whitespace-nowrap">
-                          Template
-                        </span>
-                      )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {topRepos.map((repo) => (
+              <a
+                key={repo.full_name}
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group"
+              >
+                <div className="h-full p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 transition-all hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-sm">
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-medium text-neutral-900 dark:text-neutral-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
+                          {repo.name}
+                        </h3>
+                        {repo.archived && (
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 whitespace-nowrap">
+                            Archived
+                          </span>
+                        )}
+                        {repo.is_template && (
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 whitespace-nowrap">
+                            Template
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    {repo.description && (
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1 line-clamp-2">
-                        {repo.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400 flex-shrink-0">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                    <span>{repo.stargazers_count}</span>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 flex-grow line-clamp-2 mb-3">
+                      {repo.description || "No description available"}
+                    </p>
+                    <div className="flex items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400">
+                      <div className="flex items-center gap-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span>{repo.stargazers_count}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </a>
-          ))}
+              </a>
+            ))}
+          </div>
         </div>
       )}
     </div>
