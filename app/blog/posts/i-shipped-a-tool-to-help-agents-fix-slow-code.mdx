@@ -1,0 +1,98 @@
+---
+title: I Shipped a Tool To Help Agents Fix Slow Code
+publishedAt: '2025-09-21'
+summary: 'How I built a tool that gives AI agents access to the runtime context they need to accurately debug slow code.'
+---
+
+Since shipping [my first project built with AI](https://www.indragie.com/blog/i-shipped-a-macos-app-built-entirely-by-claude-code) in July, I've continued to immerse myself in the AI + developer tools space. I've been writing (generating) more code, trying new tools (hello GPT-5 and Codex), and trying to push the boundaries of what agents can do. 
+
+One particular area I've always been really passionate about is *making software fast*. For context, I previously started a company building a mobile performance monitoring product, which was [acquired by Sentry](https://blog.sentry.io/bringing-specto-into-the-sentry-family/) a few years ago. I still work at Sentry today, leading engineering teams building a wide spectrum of observability tools. I wanted to combine my background with the new world of agentic developer tools to see how I could leverage agents to fix slow code. I came out of it with another project, and this time, there wasn't a single hand written line: **100% of the code was written by Claude Code and Codex.**
+
+This post explains the current state of debugging performance using agents, and how I went about building a tool that gives agents the runtime context they need to accurately determine the root cause of performance problems. 
+
+1. [Agents Can Already Fix Slow Code... Kind of](#1-agents-can-already-fix-slow-code-kind-of)
+2. [Some Background on Profilers](#2-some-background-on-profilers)
+3. [LLMs Can Interpret Dense Data In a Way Humans Can't](#3-llms-can-interpret-dense-data-in-a-way-humans-cant)
+4. [Great DX is Important for Humans but Even More Important for Agents](#4-great-dx-is-important-for-humans-but-even-more-important-for-agents)
+5. [MCP or CLI?](#5-mcp-or-cli)
+6. [Introducing uniprof](#6-introducing-uniprof)
+7. [Observability Tools of the Future Will Look Very Different](#7-observability-tools-of-the-future-will-look-very-different)
+
+## 1. Agents Can Already Fix Slow Code... Kind of
+
+Many performance anti-patterns are evident from just reading the code, which means that agents are also good at fixing this class of problems. For example: repetitive computations that could be cached (e.g. regex compilation), running blocking code on the UI thread of a frontend application, inefficient algorithms that run in quadratic time, etc. This makes sense: **LLMs are pattern matchers and given the necessary context, this is a clear pattern matching problem.**
+
+![GPT-5 analyzing the performance of some Python matmul code](/blog/2-gpt5-performance-analysis.png)
+
+Where it gets more complicated is **when the agent cannot fully trace the execution path of the code**. This can happen when code calls into standard library APIs or 3rd party dependencies where the source is not available to the agent unless it is manually provided as context. In this case, the agent sees the caller code but does not always understand the performance characteristics of the callee. It has to make a best guess based on its own knowledge of the library, which is potentially nonexistent or outdated. In the worst case, it hallucinates implementation details and hypothetical performance characteristics based on the function signature. A similar concern applies to HTTP requests or RPC calls where the implementation is in a different service.
+
+A related scenario is when all necessary code context is available, but the agent cannot identify the correct code path based on the vague description of the performance issue passed in the prompt (e.g. *"loading the detail screen is slow, please improve it"*). There could be cached and uncached variants of the screen loading logic or a set of feature flags that modify runtime behavior, resulting in a large matrix of potential code paths. When the code path in question is ambiguous, it's possible that the agent will choose the wrong one to investigate, yielding an incorrect root cause analysis of the issue. Here's one such example of Claude Code attempting to fix a performance problem in [Context](https://github.com/indragiek/Context), my native macOS MCP client:
+
+<video src="/blog/2-debugging-without-uniprof.mp4" controls></video>
+
+It made a reasonable attempt, but with access to only the source code and no other tools, it identified the wrong cause[^1]. Luckily, there's an entire category of tools that lets us trace the execution path of a program: **profilers**.
+
+## 2. Some Background on Profilers
+
+Profiling tools like [perf](https://perfwiki.github.io/main/) and [Instruments](https://developer.apple.com/tutorials/instruments) are used to measure the performance of code at runtime. At a high level, profiling data tells you often specific functions in your code are executed and how long the function calls take. They can also collect more detailed metrics like the number of CPU cycles or instructions that were executed, which is important for more fine grained performance optimization work. If you've ever heard the saying "measure twice, cut once", a similar idea applies here: you should measure and find out what's _actually_ slow first, instead of guessing and unnecessarily optimizing (complicating) your implementation.
+
+That sounds good in theory, but the reality is that profiling tools are hard to use for many reasons:
+* Profilers often need additional permissions or superuser privileges to be able to profile out-of-process with lower performance overhead
+* Interpreted language runtimes (Python, JavaScript, etc.) require specific profiling tools for each runtime
+* Profilers output a multitude of different formats (chrometrace, speedscope, pprof, OTLP, etc.)
+* Native code needs to be compiled with DWARF metadata or frame pointers to be able to symbolicate function addresses
+* The resulting visualizations are dense and require some experience to read and translate to real world performance improvements 
+
+![Flamegraph rendered using speedscope](/blog/2-speedscope.png)
+
+Profilers are hard enough for humans to set up and use, and agents will struggle too unless given hyper specific context on how to use the tool. Profilers aren't a clear out-of-the-box solution to the problem described above, but LLMs have one huge advantage over humans when it comes to dealing with data like this...
+
+## 3. LLMs Can Interpret Dense Data In a Way Humans Can't
+
+Debugging real world applications often requires digging through a lot of text to understand the state of the program during a crash, performance issue, or some other bug. Logs are the most basic and universal form of this data, but it gets increasingly complicated from there. A developer may need to look at stack traces, distributed traces, time series charts, or in this case, profiles. Humans are not ideally suited to this task because the data is vast and its easy to miss a single relevant line in a log file that pinpoints a bug. 
+
+In contrast, LLMs are excellent at taking in lots of context and using it effectively to debug a problem. The input data can take many forms: raw logs, screenshots of charts, and structured JSON data for traces and profiles. LLMs do reasonably well even when the context is more fuzzy (e.g. partial screenshots), but can do an exceptional job when given complete, structured textual data. 
+
+I experimented with this manually and found that if it was possible to easily generate structured profiling data, an LLM could use this data to optimize performance of an application much more accurately than guessing based on reading the code.
+
+## 4. Great DX is Important for Humans but Even More Important for Agents
+
+At this point, I realized that the challenge was not about whether an agent could leverage the profiling data (it could) but whether it was capable of setting up and running the profiler in the first place. I wanted the approach to be portable, so that anyone could give a coding agent the ability to use profiling data without complex setup or modifications to its environment. I started building a solution with the following goals, aimed to address most of the shortcomings of traditional profiling tools:
+
+* It should be a self contained tool with a minimal set of dependencies. It should not require elevated privileges or platform-specific profiling tools to be installed on the host system. It should not need to alter the host system at all.
+* It should be language/runtime agnostic and support a wide array of common programming languages, but have a unified experience across all of them.
+* It should do more than just expose raw profiling data to the agent. Effective usage of profiling data requires some aggregation of profile samples to determine frequency, percentile durations, etc. LLMs are not ideally suited to doing these computations, so the tool should implement them and present an easily consumable view of the data to the LLM.
+* It should have a simple interface that exposes a minimal set of capabilities, namely collecting a profile and analyzing the profile results. There should be no more than a handful of tools exposed to the agent. Ideally it would be a single tool.
+
+## 5. MCP or CLI?
+
+There is debate in the community around whether tools like this should be implemented as [MCP servers](https://modelcontextprotocol.io/docs/getting-started/intro) or traditional CLI tools. MCP's inclusion of a standardized, OAuth-based authorization mechanism makes it a clear choice for tools that need to access protected resources, but for local tools that run on a developer machine, the advantages are less clear. 
+
+I appreciated [this article](https://mariozechner.at/posts/2025-08-15-mcp-vs-cli/) by Mario Zechner, which is one of the very few attempts to analytically come up with an answer to the question. The conclusion from the article is that for the most part, it does not matter whether a tool is a CLI or MCP as long as sufficient context is provided on how to use the tool. That said, MCP has two benefits that, in my opinion, make it a good choice even for local development tools:
+
+* It allows you to embed context on how to use tool within the server itself via tool descriptions, whereas for a CLI, you would need to either provide the context manually or hope that the agent invokes the `help` command on the tool before attempting to use it.
+* There is no standardized way of installing CLI tools. Sometimes they need to be installed manually and sometimes they use package managers that are specific to the host platform. In contrast, MCP servers will (hopefully) become easier to install than CLIs with the recently introduced [MCP Registry](https://blog.modelcontextprotocol.io/posts/2025-09-08-mcp-registry-preview/).
+
+There is room for both solutions to exist, and I decided not to take a stance on this with my tool: it is primarily a CLI that can be used by both humans and agents just like any other CLI tool, but I provide a built in MCP wrapper that exposes a single `run_profiler` tool and a detailed tool description that makes it more likely that an agent will use it correctly without additional context.
+
+## 6. Introducing uniprof
+
+![uniprof](/blog/2-uniprof.png)
+
+[uniprof](https://uniprof.sh) is the solution I came up with to address this problem. It's a simple, self-contained profiling tool that is designed to be used by both humans and agents. The only dependencies required on the host system are the Node.js runtime and Docker.
+
+uniprof solves the set up problem by using Docker containers that are pre-configured with the correct profiling tools for each platform. It detects the platform based on the command being invoked, pulls the right container, and profiles the program within the container. It uses multiple open-source profiling tools under the hood, but transforms their outputs to a common format and performs analysis on top of the common format. The analysis generates a list of performance "hotspots" that can be used to guide more intelligent decision making on what to optimize.
+
+Here's that same performance debugging scenario from earlier, except this time, Claude Code has access to uniprof:
+
+<video src="/blog/2-debugging-with-uniprof.mp4" controls></video>
+
+This time, it correctly identifies the real root cause based on evidence from the profile that ~22% of CPU time is spent on a particular syntax highlighting function[^1].
+
+## 7. Observability Tools of the Future Will Look Very Different
+
+In my [last blog post](https://www.indragie.com/blog/i-shipped-a-macos-app-built-entirely-by-claude-code#ides-of-the-future-will-look-very-different), I made a prediction that IDEs of the future will look very different, based on what's required to make agents effective at writing code. I'd like to make a similar prediction here: traditional observability tools focus on surfacing powerful data querying and visualization capabilities intended to be consumed by humans. LLMs are better than the average developer at using telemetry (traces, logs, metrics, profiles) to debug software, and observability tools will eventually shape themselves to reflect this reality. There will be less dashboards and more end-to-end root cause analysis and bug fixing automated by agents.
+
+Side note: this is the future I'm working on building at [Sentry](https://sentry.io/), so if this problem space interests you, please [reach out](mailto:i@indragie.com) and maybe we can work on this together!
+
+[^1]: See the [uniprof website](https://uniprof.sh) for full transcripts on the Claude Code outputs for these examples
