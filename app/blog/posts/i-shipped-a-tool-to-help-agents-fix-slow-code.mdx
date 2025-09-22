@@ -1,6 +1,6 @@
 ---
 title: I Shipped a Tool To Help Agents Fix Slow Code
-publishedAt: '2025-09-21'
+publishedAt: '2025-09-22'
 summary: 'How I built a tool that gives AI agents access to the runtime context they need to accurately debug slow code.'
 ---
 
@@ -20,7 +20,7 @@ This post explains the current state of debugging performance using agents, and 
 
 ## 1. Agents Can Already Fix Slow Code... Kind of
 
-Many performance anti-patterns are evident from just reading the code, which means that agents are also good at fixing this class of problems. For example: repetitive computations that could be cached (e.g. regex compilation), running blocking code on the UI thread of a frontend application, inefficient algorithms that run in quadratic time, etc. This makes sense: **LLMs are pattern matchers and given the necessary context, this is a clear pattern matching problem.**
+Many performance anti-patterns are evident from just reading the code, which means that agents are also good at fixing this class of problems. For example: repetitive computations that could be cached (e.g. regex compilation), running blocking code on the UI thread of a frontend application, algorithms that are inefficient in time/memory complexity, etc. This makes sense: **LLMs are pattern matchers and given the necessary context, this is a clear pattern matching problem.**
 
 ![GPT-5 analyzing the performance of some Python matmul code](/blog/2-gpt5-performance-analysis.png)
 
