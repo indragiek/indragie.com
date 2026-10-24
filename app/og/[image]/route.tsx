@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import { getBlogPosts } from 'app/blog/utils'
 
 async function loadGoogleFont(font: string, text: string, weight: number = 400) {
   const url = `https://fonts.googleapis.com/css2?family=${font}:wght@${weight}&text=${encodeURIComponent(text)}`
@@ -17,22 +18,33 @@ async function loadGoogleFont(font: string, text: string, weight: number = 400) 
   throw new Error('failed to load font data')
 }
 
-export async function GET(request: Request) {
-  let url = new URL(request.url)
-  let title = url.searchParams.get('title') || 'Indragie Karunaratne'
-  let subtitle = url.searchParams.get('subtitle') || 'Director of Engineering at Sentry'
-  let showAvatar = url.searchParams.get('avatar') !== 'false'
-  let type = url.searchParams.get('type')
-  let date = url.searchParams.get('date')
-  let author = url.searchParams.get('author')
-  
+// Rendered at build time: home.png for the site, <slug>.png for each post
+export const dynamic = 'force-static'
+export const dynamicParams = false
+
+export function generateStaticParams() {
+  return [
+    { image: 'home.png' },
+    ...getBlogPosts().map((post) => ({ image: `${post.slug}.png` })),
+  ]
+}
+
+export async function GET(_request: Request, { params }: { params: Promise<{ image: string }> }) {
+  let { image } = await params
+  let post = getBlogPosts().find((post) => `${post.slug}.png` === image)
+  let title = post?.metadata.title || 'Indragie Karunaratne'
+  let subtitle = 'Director of Engineering at Sentry'
+  let showAvatar = true
+  let author = 'Indragie Karunaratne'
+
   // For blog posts, we'll show a different layout
-  if (type === 'blog' && date && author) {
+  if (post) {
     // Format the date
-    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+    const formattedDate = new Date(post.metadata.publishedAt).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'UTC',
     })
     
     const blogText = `${title}${author}${formattedDate}`

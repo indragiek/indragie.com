@@ -28,7 +28,7 @@ Where it gets more complicated is **when the agent cannot fully trace the execut
 
 A related scenario is when all necessary code context is available, but the agent cannot identify the correct code path based on the vague description of the performance issue passed in the prompt (e.g. *"loading the detail screen is slow, please improve it"*). There could be cached and uncached variants of the screen loading logic or a set of feature flags that modify runtime behavior, resulting in a large matrix of potential code paths. When the code path in question is ambiguous, it's possible that the agent will choose the wrong one to investigate, yielding an incorrect root cause analysis of the issue. Here's one such example of Claude Code attempting to fix a performance problem in [Context](https://github.com/indragiek/Context), my native macOS MCP client:
 
-<video src="/blog/2-debugging-without-uniprof.mp4" controls></video>
+<video src="https://media.uniprof.sh/without-uniprof.mp4" controls></video>
 
 It made a reasonable attempt, but with access to only the source code and no other tools, it identified the wrong cause[^1]. Luckily, there's an entire category of tools that lets us trace the execution path of a program: **profilers**.
 
@@ -85,7 +85,7 @@ uniprof solves the set up problem by using Docker containers that are pre-config
 
 Here's that same performance debugging scenario from earlier, except this time, Claude Code has access to uniprof:
 
-<video src="/blog/2-debugging-with-uniprof.mp4" controls></video>
+<video src="https://media.uniprof.sh/with-uniprof.mp4" controls></video>
 
 This time, it correctly identifies the real root cause based on evidence from the profile that ~22% of CPU time is spent on a particular syntax highlighting function[^1].
 

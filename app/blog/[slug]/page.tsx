@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   } = post.metadata
   let ogImage = image
     ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}&type=blog&date=${encodeURIComponent(publishedTime)}&author=${encodeURIComponent('Indragie Karunaratne')}`
+    : `${baseUrl}/og/${post.slug}.png`
 
   return {
     title,
@@ -79,7 +79,7 @@ export default async function Blog({ params }) {
             description: post.metadata.summary,
             image: post.metadata.image
               ? `${baseUrl}${post.metadata.image}`
-              : `${baseUrl}/og?title=${encodeURIComponent(post.metadata.title)}&type=blog&date=${encodeURIComponent(post.metadata.publishedAt)}&author=${encodeURIComponent('Indragie Karunaratne')}`,
+              : `${baseUrl}/og/${post.slug}.png`,
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               '@type': 'Person',

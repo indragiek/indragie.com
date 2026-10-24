@@ -3,8 +3,6 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Navbar } from './components/nav'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import Footer from './components/footer'
 import { BackToTop } from './components/back-to-top'
 import { baseUrl } from './sitemap'
@@ -23,7 +21,7 @@ export const metadata: Metadata = {
     siteName: 'Indragie Karunaratne',
     images: [
       {
-        url: `${baseUrl}/og`,
+        url: `${baseUrl}/og/home.png`,
         width: 1200,
         height: 630,
         alt: 'Indragie Karunaratne - Director of Engineering at Sentry',
@@ -36,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Indragie Karunaratne',
     description: "I'm a Director of Engineering at Sentry working on observability tools. I started my career as an independent iOS and macOS developer, then worked on mobile infrastructure at Meta before co-founding Specto, a mobile application performance monitoring startup (acquired by Sentry). Lately, I've been exploring AI developer tools and building Context, a macOS app for debugging MCP servers.",
-    images: [`${baseUrl}/og`],
+    images: [`${baseUrl}/og/home.png`],
   },
   robots: {
     index: true,
@@ -72,8 +70,6 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
-          <Analytics />
-          <SpeedInsights />
         </main>
         <BackToTop />
       </body>
